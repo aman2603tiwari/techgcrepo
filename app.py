@@ -137,7 +137,7 @@ st.markdown("""
 def get_groq():
     return OpenAI(
         base_url="https://api.groq.com/openai/v1",
-        api_key=os.environ["GROQ_API_KEY"],
+        api_key="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",
     )
 
 
