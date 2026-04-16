@@ -13,7 +13,7 @@ load_dotenv()
 
 llm = ChatOpenAI(
     base_url="https://api.groq.com/openai/v1",
-    api_key=os.environ["GROQ_API_KEY"],
+    api_key="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",
     model="llama-3.3-70b-versatile",
     temperature=0,           # deterministic → more reliable JSON
 )
