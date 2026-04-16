@@ -258,8 +258,7 @@ with left:
         c1, c2 = st.columns(2)
         with c1:
             category = st.selectbox("Category", [
-                "AI/ML", "Web3 / Blockchain", "ClimateTech", "Fintech",
-                "DevOps / Cloud", "Cybersecurity", "Edtech", "Healthtech",
+                "Music", "Sports", "Conference",
             ])
         with c2:
             geography = st.selectbox("Location", [
