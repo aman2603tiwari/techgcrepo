@@ -1,49 +1,232 @@
-# Conference Planner — Multi-Agent AI System
+# Multi-Agent Conference Planning System
 
-## Setup
+Production-grade **multi-agent AI system** that autonomously generates end-to-end conference plans (sponsors, speakers, venues, pricing, and GTM strategy) from minimal inputs.
 
-```bash
-cd conference_agent
-python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+Built for **High Prep PS1 — Pinch × IIT Roorkee (TGC 2026)**.
 
-cp .env.example .env
-# fill in GROQ_API_KEY and TAVILY_API_KEY
+---
+
+## 🚀 Overview
+
+This system takes **3 inputs**:
+- Event Category  
+- Geography  
+- Audience Size  
+
+…and outputs a **complete conference plan** using a coordinated multi-agent pipeline.
+
+### Problems Solved
+- Fragmented event data
+- Manual sponsor/speaker discovery
+- Unstructured pricing & planning
+
+---
+
+## 🧠 Architecture
+
+Sequential **multi-agent pipeline** orchestrated using LangGraph:
+
+```
+User Input (Streamlit UI)
+        ↓
+LangGraph StateGraph
+        ↓
+Sponsor → Speaker → Venue → Pricing → GTM
+        ↓
+RAG (Qdrant) + Web Search (Tavily)
+        ↓
+Structured JSON → UI + Chatbot
 ```
 
-## Run CLI
+- Shared **state object (TypedDict)** ensures safe data flow  
+- Each agent writes only to its own output key  
+
+---
+
+## 🤖 Agents
+
+| Agent     | Output |
+|----------|--------|
+| Sponsor  | Sponsor recommendations + funding estimates |
+| Speaker  | Speaker/artist suggestions |
+| Venue    | Venue shortlist with cost & capacity |
+| Pricing  | Ticket pricing + revenue model |
+| GTM      | Marketing & go-to-market strategy |
+
+**All agents:**
+- Use **RAG + live web search**
+- Generate **strict JSON outputs**
+- Run with **temperature = 0 (deterministic)**
+
+---
+
+## 🧰 Tech Stack
+
+- **LangGraph (StateGraph)** – orchestration  
+- **Groq LLaMA-3.3-70B** – LLM  
+- **Qdrant** – vector DB (RAG)  
+- **Tavily API** – web search  
+- **Sentence Transformers (MiniLM)** – embeddings  
+- **Streamlit** – UI  
+- **Python 3.14**
+
+---
+
+## 📊 Data Layer
+
+- **1,000+ events dataset (2025–2026)**
+- Domains:
+  - Conferences
+  - Music Festivals
+  - Sporting Events
+- Regions:
+  - India
+  - USA
+  - Europe
+  - Singapore
+
+### Dataset Fields
+- Event metadata (name, location, year)
+- Pricing tiers
+- Sponsors & speakers
+- Attendance & revenue
+
+---
+
+## 🔎 RAG System
+
+- Local **Qdrant vector store**
+- Query:
+  ```
+  "{category} conference {geography}"
+  ```
+- Retrieves **top-3 similar past events**
+
+### Features
+- Persistent storage  
+- Smart reload via **MD5 hash**  
+- API compatibility fallback  
+
+---
+
+## 🌐 Data Collection Pipeline
+
+Multi-platform scraping system:
+
+- Eventbrite  
+- Cvent  
+- Luma  
+- 10times  
+- ConcertArchives (custom JS engine)
+
+### Features
+- Deduplication + validation  
+- Anti-bot protection  
+- Dynamic content scraping (Playwright + JS)  
+
+---
+
+## 💻 User Interface
+
+Built with **Streamlit**:
+
+- Two-column layout:
+  - Left → Inputs + outputs  
+  - Right → AI chatbot  
+
+### Features
+- Real-time agent streaming  
+- Tabbed structured outputs  
+- Context-aware chatbot  
+- Auto-generated suggestion chips  
+
+---
+
+## 📁 Project Structure
+
+```
+main.py          # CLI entry
+app.py           # Streamlit UI
+graph.py         # LangGraph pipeline
+state.py         # Shared state schema
+
+agents/
+  sponsor.py
+  speaker.py
+  venue.py
+  pricing.py
+  gtm.py
+
+tools/
+  search.py      # RAG + Tavily + JSON parsing
+  llm.py         # LLM wrapper
+
+data/
+  events.csv     # dataset
+
+scrapers/        # data pipeline
+
+qdrant_db/       # vector store
+```
+
+---
+
+## ⚙️ Setup
+
+### 1. Install
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Configure
+```bash
+cp .env.example .env
+```
+
+Add:
+```
+GROQ_API_KEY=
+TAVILY_API_KEY=
+```
+
+### 3. Run
+
+**CLI**
 ```bash
 python main.py
 ```
 
-## Run Streamlit UI
+**UI**
 ```bash
 streamlit run app.py
 ```
 
 ---
 
-## data/events.csv — Column Reference (for Person 2)
+## ⚠️ Limitations
 
-| Column | Type | Example | Notes |
-|--------|------|---------|-------|
-| event_name | string | `PyCon India 2024` | Full official name |
-| category | string | `AI/ML` | Must match one of: AI/ML, Web3 / Blockchain, ClimateTech, Fintech, DevOps / Cloud, Cybersecurity, Edtech, Healthtech |
-| city | string | `Bangalore` | City only (no country) |
-| country | string | `India` | |
-| year | integer | `2024` | |
-| venue_name | string | `NIMHANS Convention Centre` | Full venue name |
-| attendance | integer | `1200` | Actual/reported attendance |
-| duration_days | integer | `2` | |
-| ticket_price_early_bird | integer | `800` | INR, 0 if free |
-| ticket_price_standard | integer | `1200` | INR |
-| ticket_price_vip | integer | `3500` | INR |
-| sponsors | string | `Google\|AWS\|Microsoft` | Pipe-separated company names |
-| speakers | string | `Guido van Rossum\|Armin Ronacher` | Pipe-separated full names |
-| communities_promoted | string | `Python India Discord\|LinkedIn` | Pipe-separated |
-| total_revenue_inr | integer | `3200000` | Estimated total (tickets + sponsorships) |
+- Sequential agents → latency (~30–60s)  
+- Static RAG dataset (no live ingestion yet)  
+- Exhibitor & Ops agents not implemented  
+- LinkedIn scraping requires authentication  
 
-**Target**: 50-100 rows covering events from 2022-2025 across India + Singapore + global.
+---
 
-**Sources to scrape**: 10times.com, Luma.com, Hasgeek.com, Devfolio.co, NASSCOM.in, individual event websites.
+## 🔮 Future Improvements
+
+- Parallel agent execution  
+- Outreach email generation agent  
+- Pricing simulation dashboard  
+- Persistent memory across sessions  
+- Visual agent execution graph  
+
+---
+
+## 🏆 Highlights
+
+- End-to-end automated conference planning  
+- Production-grade multi-agent architecture  
+- Robust JSON parsing fallback system  
+- Large-scale structured dataset + scraping pipeline  
+
+---
