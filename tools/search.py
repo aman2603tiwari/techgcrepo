@@ -21,7 +21,7 @@ load_dotenv()
 # ─────────────────────────────────────────────
 # Tavily
 # ─────────────────────────────────────────────
-_tavily = TavilyClient(api_key="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")
+_tavily = TavilyClient(api_key="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")
 
 
 def web_search(query: str, max_results: int = 5) -> str:
