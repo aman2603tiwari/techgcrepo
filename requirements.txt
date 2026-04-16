@@ -1,9 +1,113 @@
+# =========================
+
+# CORE AGENT FRAMEWORK
+
+# =========================
+
 langgraph>=0.2.0
-langchain-openai>=0.1.0
+langchain>=0.2.0
 langchain-core>=0.2.0
-tavily-python>=0.3.0
-qdrant-client>=1.9.0
+langchain-openai>=0.1.0
+langchain-community>=0.2.0
+
+# =========================
+
+# LLM PROVIDERS
+
+# =========================
+
+openai>=1.30.0
+tiktoken>=0.7.0
+groq>=0.5.0
+
+# =========================
+
+# ML / DL (OPTIONAL BUT ADDED)
+
+# =========================
+
+torch>=2.2.0
+torchvision>=0.17.0
+torchaudio>=2.2.0
+
+# =========================
+
+# EMBEDDINGS / NLP
+
+# =========================
+
 sentence-transformers>=2.7.0
-streamlit>=1.35.0
+transformers>=4.40.0
+
+# =========================
+
+# VECTOR DATABASE (RAG)
+
+# =========================
+
+qdrant-client>=1.9.0
+chromadb>=0.5.0
+
+# =========================
+
+# SEARCH / TOOLS
+
+# =========================
+
+tavily-python>=0.3.0
+duckduckgo-search>=5.3.0
+
+# =========================
+
+# DATA PROCESSING
+
+# =========================
+
 pandas>=2.0.0
+numpy>=1.26.0
+
+# =========================
+
+# UI
+
+# =========================
+
+streamlit>=1.35.0
+
+# =========================
+
+# ENV + CONFIG
+
+# =========================
+
 python-dotenv>=1.0.0
+
+# =========================
+
+# SCRAPING (DATA PIPELINE)
+
+# =========================
+
+beautifulsoup4>=4.12.0
+requests>=2.31.0
+lxml>=5.0.0
+playwright>=1.44.0
+
+# =========================
+
+# UTILITIES
+
+# =========================
+
+pydantic>=2.7.0
+typing-extensions>=4.10.0
+tenacity>=8.2.0
+
+# =========================
+
+# DEBUG / DEV
+
+# =========================
+
+rich>=13.7.0
+ipython>=8.20.0
