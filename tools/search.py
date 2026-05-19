@@ -21,13 +21,16 @@ load_dotenv()
 # ─────────────────────────────────────────────
 # Tavily
 # ─────────────────────────────────────────────
-_tavily = TavilyClient(api_key="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")
+def _get_tavily() -> TavilyClient:
+    import streamlit as st
+    api_key = st.secrets.get("TAVILY_API_KEY") or os.environ.get("TAVILY_API_KEY")
+    return TavilyClient(api_key=api_key)
 
 
 def web_search(query: str, max_results: int = 5) -> str:
     """Run a Tavily search and return formatted text context."""
     try:
-        results = _tavily.search(query=query, max_results=max_results)
+        results = _get_tavily().search(query=query, max_results=max_results)
         lines = []
         for r in results.get("results", []):
             lines.append(f"[{r['title']}]\n{r['content'][:300]}")
