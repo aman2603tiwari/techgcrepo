@@ -28,6 +28,7 @@ import json
 import pandas as pd
 import streamlit as st
 from openai import OpenAI
+from tools.utils import get_secret
 
 st.set_page_config(
     page_title="Conference Planner",
@@ -133,11 +134,13 @@ st.markdown("""
 
 
 # ── Groq client ────────────────────────────────────────────────────────
+# REPLACE WITH THIS
 @st.cache_resource
 def get_groq():
+    api_key = get_secret("GROQ_API_KEY")
     return OpenAI(
         base_url="https://api.groq.com/openai/v1",
-        api_key="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",
+        api_key=api_key,
     )
 
 
@@ -258,14 +261,12 @@ with left:
         c1, c2 = st.columns(2)
         with c1:
             category = st.selectbox("Category", [
-                "AI/ML", "Web3 / Blockchain", "ClimateTech", "Fintech",
-                "DevOps / Cloud", "Cybersecurity", "Edtech", "Healthtech",
+                "Music", "Sports", "Conference",
             ])
         with c2:
             geography = st.selectbox("Location", [
-                "Bangalore, India", "Mumbai, India", "Delhi NCR, India",
-                "Hyderabad, India", "Pune, India", "Chennai, India",
-                "Singapore", "London, UK",
+                "United States","Canada","United Kingdom","Austria","Poland","Hungary","Switzerland","Romania","Czechia","Czech Republic","Spain","Portugal","France","Belgium","Italy","Germany","Netherlands","Australia","Mexico","Argentina","Brazil","Chile","Colombia","Ireland","New Zealand","Ukraine","Paraguay","Denmark","Norway","Sweden","Finland","Russian Federation","Japan","USA",
+
             ])
         audience  = st.slider("Expected attendance", 100, 5000, 500, 100, format="%d people")
         submitted = st.form_submit_button("Generate plan →", width='stretch')

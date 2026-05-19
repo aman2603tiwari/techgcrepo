@@ -15,19 +15,22 @@ from dotenv import load_dotenv
 from tavily import TavilyClient
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
+from tools.utils import get_secret
 
 load_dotenv()
 
 # ─────────────────────────────────────────────
 # Tavily
 # ─────────────────────────────────────────────
-_tavily = TavilyClient(api_key="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")
+def _get_tavily() -> TavilyClient:
+    api_key = get_secret("TAVILY_API_KEY")
+    return TavilyClient(api_key=api_key)
 
 
 def web_search(query: str, max_results: int = 5) -> str:
     """Run a Tavily search and return formatted text context."""
     try:
-        results = _tavily.search(query=query, max_results=max_results)
+        results = _get_tavily().search(query=query, max_results=max_results)
         lines = []
         for r in results.get("results", []):
             lines.append(f"[{r['title']}]\n{r['content'][:300]}")

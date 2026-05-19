@@ -1,17 +1,12 @@
 """
-graph.py  — Person 1 (you) owns this file.
+graph.py  — Person 1 owns this file.
 
-Builds the LangGraph StateGraph that wires all 5 agents together.
-Each agent writes its results into shared ConferenceState.
-The pipeline runs sequentially so later agents can use earlier agents' output.
+Builds the LangGraph workflow connecting all conference-planning agents.
 
-Pipeline order:
-  sponsor_agent → speaker_agent → venue_agent → pricing_agent → gtm_agent
-  (order matters: pricing uses venue costs; GTM uses speaker + sponsor names)
+Pipeline:
+sponsor_agent → speaker_agent → venue_agent → pricing_agent → gtm_agent
 """
-# conference_agent/pathfix.py
-import sys, os
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from langgraph.graph import StateGraph, END
 
 from state import ConferenceState
@@ -23,36 +18,54 @@ from agents.gtm import gtm_agent
 
 
 def build_graph():
-    """Build and compile the conference planning graph."""
+    """
+    Build and compile the LangGraph workflow.
+    """
+
     builder = StateGraph(ConferenceState)
 
-    # ── Register nodes ───────────────────────────────────────────────
+    # ─────────────────────────────────────────────
+    # Register nodes
+    # ─────────────────────────────────────────────
     builder.add_node("sponsor_agent", sponsor_agent)
     builder.add_node("speaker_agent", speaker_agent)
-    builder.add_node("venue_agent",   venue_agent)
+    builder.add_node("venue_agent", venue_agent)
     builder.add_node("pricing_agent", pricing_agent)
-    builder.add_node("gtm_agent",     gtm_agent)
+    builder.add_node("gtm_agent", gtm_agent)
 
-    # ── Define execution order ───────────────────────────────────────
+    # ─────────────────────────────────────────────
+    # Define execution flow
+    # ─────────────────────────────────────────────
     builder.set_entry_point("sponsor_agent")
+
     builder.add_edge("sponsor_agent", "speaker_agent")
     builder.add_edge("speaker_agent", "venue_agent")
-    builder.add_edge("venue_agent",   "pricing_agent")
+    builder.add_edge("venue_agent", "pricing_agent")
     builder.add_edge("pricing_agent", "gtm_agent")
-    builder.add_edge("gtm_agent",     END)
+    builder.add_edge("gtm_agent", END)
 
+    # Compile graph
     return builder.compile()
 
 
-# ── Convenience: empty initial state ────────────────────────────────
-def initial_state(event_category: str, geography: str, audience_size: int) -> dict:
+def initial_state(
+    event_category: str,
+    geography: str,
+    audience_size: int
+) -> dict:
+    """
+    Create initial shared state for the conference pipeline.
+    """
+
     return {
         "event_category": event_category,
-        "geography":      geography,
-        "audience_size":  audience_size,
-        "sponsors":  [],
-        "speakers":  [],
-        "venues":    [],
-        "pricing":   {},
-        "gtm_plan":  {},
+        "geography": geography,
+        "audience_size": audience_size,
+
+        # Agent outputs
+        "sponsors": [],
+        "speakers": [],
+        "venues": [],
+        "pricing": {},
+        "gtm_plan": {},
     }
