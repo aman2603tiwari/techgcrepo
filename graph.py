@@ -1,13 +1,11 @@
 """
-graph.py  — Person 1 owns this file.
+graph.py — Conference Planning Agent Graph
 
-Builds the LangGraph workflow connecting all conference-planning agents.
-
-Pipeline:
-sponsor_agent → speaker_agent → venue_agent → pricing_agent → gtm_agent
+Builds the LangGraph workflow connecting all conference-planning agents in PARALLEL execution.
+All agents run concurrently: sponsor_agent, speaker_agent, venue_agent, pricing_agent, gtm_agent
 """
 
-from langgraph.graph import StateGraph, END
+from langgraph.graph import StateGraph, START, END
 
 from state import ConferenceState
 from agents.sponsor import sponsor_agent
@@ -19,7 +17,8 @@ from agents.gtm import gtm_agent
 
 def build_graph():
     """
-    Build and compile the LangGraph workflow.
+    Build and compile the LangGraph workflow with PARALLEL agent execution.
+    All agents start simultaneously from the same input state.
     """
 
     builder = StateGraph(ConferenceState)
@@ -34,14 +33,20 @@ def build_graph():
     builder.add_node("gtm_agent", gtm_agent)
 
     # ─────────────────────────────────────────────
-    # Define execution flow
+    # Define PARALLEL execution flow
     # ─────────────────────────────────────────────
-    builder.set_entry_point("sponsor_agent")
+    # All agents start from START and run in parallel
+    builder.add_edge(START, "sponsor_agent")
+    builder.add_edge(START, "speaker_agent")
+    builder.add_edge(START, "venue_agent")
+    builder.add_edge(START, "pricing_agent")
+    builder.add_edge(START, "gtm_agent")
 
-    builder.add_edge("sponsor_agent", "speaker_agent")
-    builder.add_edge("speaker_agent", "venue_agent")
-    builder.add_edge("venue_agent", "pricing_agent")
-    builder.add_edge("pricing_agent", "gtm_agent")
+    # All agents converge to END
+    builder.add_edge("sponsor_agent", END)
+    builder.add_edge("speaker_agent", END)
+    builder.add_edge("venue_agent", END)
+    builder.add_edge("pricing_agent", END)
     builder.add_edge("gtm_agent", END)
 
     # Compile graph
