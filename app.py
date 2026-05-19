@@ -133,11 +133,13 @@ st.markdown("""
 
 
 # ── Groq client ────────────────────────────────────────────────────────
+# REPLACE WITH THIS
 @st.cache_resource
 def get_groq():
+    api_key = st.secrets.get("GROQ_API_KEY") or os.environ.get("GROQ_API_KEY")
     return OpenAI(
         base_url="https://api.groq.com/openai/v1",
-        api_key="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",
+        api_key=api_key,
     )
 
 
