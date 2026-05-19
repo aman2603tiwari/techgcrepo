@@ -17,7 +17,7 @@ _api_key = get_secret("GROQ_API_KEY")
 llm = ChatOpenAI(
     base_url="https://api.groq.com/openai/v1",
     api_key=_api_key,                  # ← no hardcoded key
-    model="llama-3.3-70b-versatile",
+    model="llama-3.1-8b-instant",
     temperature=0,
 )
 
