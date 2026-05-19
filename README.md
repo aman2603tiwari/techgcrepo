@@ -20,6 +20,9 @@ This system takes **3 inputs**:
 - Manual sponsor/speaker discovery
 - Unstructured pricing & planning
 
+### 🌍 Live Demo
+**Try it now:** [conferenceplanner.streamlit.app](https://conferenceplanner.streamlit.app/)
+
 ---
 
 ## 🧠 Architecture
